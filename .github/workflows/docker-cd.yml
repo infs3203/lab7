@@ -1,10 +1,17 @@
-name: Docker CD
+name: Docker Continuous Delivery
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - "main"      # Runs when code is pushed to 'main'
+      - "dev"       # Runs when code is pushed to 'dev'
+      - "feature-*" # Runs when code is pushed to any 'feature-*' branch
+    tags:
+      - "*"         # Runs when a Git tag is pushed (e.g., v1.2.3)
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - "main"      # Runs when a PR is created targeting 'main'
+      - "dev"       # Runs when a PR is created targeting 'dev'
 
 env:
   REGISTRY: ghcr.io
@@ -39,6 +46,9 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha
+            
+      - name: Debug metadata
+        run: echo "Generated tags: ${{ steps.meta.outputs.tags }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -46,4 +56,4 @@ jobs:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }} 
+          labels: ${{ steps.meta.outputs.labels }}
