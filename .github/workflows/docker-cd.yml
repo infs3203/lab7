@@ -48,7 +48,8 @@ jobs:
             type=sha
             
       - name: Debug metadata
-        run: echo "Generated tags: ${{ steps.meta.outputs.tags }}"
+        run: |
+          echo "Generated tags: ${{ steps.meta.outputs.tags }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
